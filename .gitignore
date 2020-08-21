@@ -1,6 +1,7 @@
 # Binaries for programs and plugins
 fELogs/
 tests/
+.idea/
 *.db
 *.exe
 *.exe~
@@ -16,4 +17,3 @@ tests/
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-/.idea

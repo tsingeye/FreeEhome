@@ -11,4 +11,18 @@
 - 语音对讲
 
 # 架构
+- 基于beego框架开发
 # 编译步骤
+- go get:
+    在项目中使用go get下载安装依赖包
+- go build:
+    - 在main.go函数所在路径上使用go build编译。
+    - Windows：执行FreeEhome.exe即可运行程序；
+    - Linux：执行./FreeEhome即可运行程序。
+# 打包部署，使用bee工具轻松跨平台打包部署：
+- Windows：bee pack -be GOOS=windows;
+- Linux：bee pack -be GOOS=linux;
+- Windows如何安装成服务？
+    - 解压打包的文件；
+    - 双击install.bat安装成服务；
+    - 双击uninstall.bat卸载服务。
