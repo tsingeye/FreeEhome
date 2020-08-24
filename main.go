@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
-	"github.com/kqbi/service"
 	figure "github.com/common-nighthawk/go-figure"
+	"github.com/kqbi/service"
 	_ "github.com/tsingeye/FreeEhome/routers"
 	"github.com/tsingeye/FreeEhome/service/udp"
 	"github.com/tsingeye/FreeEhome/tools/logs"
@@ -24,7 +24,7 @@ func (p *program) Start(s service.Service) error {
 }
 
 func (p *program) run() {
-	figure.NewFigure("FreeEhome","", true).Print()
+	figure.NewFigure("FreeEhome", "", true).Print()
 	logs.BeeLogger.Info("FreeEHome Service Start!!!")
 	fmt.Printf("%s FreeEHome Service Start!!!\n", time.Now().Format("2006-01-02 15:04:05"))
 	//初始化数据库
