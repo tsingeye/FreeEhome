@@ -24,11 +24,15 @@ const (
 
 var (
 	FreeEHomeCodeMap  map[int64]string
-	UDPAddr           string    //udp服务地址
-	STSAddr           string    //STS服务地址
-	StreamStartIP     string    //实时直播流推送配置IP
-	StreamStartPort   int64     //实时直播流推送配置Port
-	WaitStreamURLTime int64     //等待实时直播URL超时时间
+	UDPAddr           string   //udp服务地址
+	STSAddr           string   //STS服务地址
+	StreamStartIP     string   //实时直播流推送配置IP
+	StreamStartPort   int64    //实时直播流推送配置Port
+	WaitStreamURLTime int64    //等待实时直播URL超时时间
+	StreamIP          []string //用于组合实时直播播放URL
+	HLSPort           []string
+	RTMPPort          []string
+	RTSPPort          []string
 	XMLConfigInfo     XMLConfig //解析配置文件中的XML文件
 )
 
@@ -70,6 +74,11 @@ func init() {
 		WaitStreamURLTime = 4
 		logs.BeeLogger.Error("init waitStreamURLTime, set default value waitStreamURLTime=%d", WaitStreamURLTime)
 	}
+
+	StreamIP = beego.AppConfig.Strings("streamIP")
+	HLSPort = beego.AppConfig.Strings("hlsPort")
+	RTMPPort = beego.AppConfig.Strings("rtmpPort")
+	RTSPPort = beego.AppConfig.Strings("rtspPort")
 
 	appPath := tools.GetAbsPath()
 	os.Chdir(appPath)

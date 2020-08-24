@@ -43,7 +43,7 @@ func SendInviteStream(authCode, deviceID, channelID string) (int64, string) {
 
 	if ok && sessionInfo.Session != "" {
 		fmt.Printf("%s authCode=%s, DeviceID=%s, ChannelID=%s, this inviteStream's session in memory, direct request for STS Service\n", time.Now().Format("2006-01-02 15:04:05"), authCode, deviceID, channelID)
-		logs.BeeLogger.Emergency("authCode=%s, DeviceID=%s, ChannelID=%s, this inviteStream's session in memory, direct request for STS Service", authCode, deviceID, channelID)
+		logs.BeeLogger.Emergency("authCode=%s, DeviceID=%s, ChannelID=%s, this inviteStream's session in memory, there is no need to get a new session", authCode, deviceID, channelID)
 		//该设备对应的通道已被触发过实时直播，此时无需向设备发送启动指令，直接向STS服务器发送POST请求
 		sessionURL := getSessionURLFromSTS(sessionInfo.Session)
 		if sessionURL == "" {

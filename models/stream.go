@@ -17,10 +17,9 @@ func StartStream(authCode, deviceID, channelID string) (replyData map[string]int
 }
 
 func StopStream(authCode, deviceID, channelID string) (replyData map[string]interface{}) {
-	errCode := udp.SendByeStream(authCode, deviceID, channelID)
 	replyData = map[string]interface{}{
-		"errCode":  errCode,
-		"errMsg":   config.FreeEHomeCodeMap[errCode],
+		"errCode":  config.FreeEHomeSuccessOK,
+		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
 		"authCode": authCode,
 	}
 	return
