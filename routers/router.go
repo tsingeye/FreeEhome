@@ -38,7 +38,7 @@ func init() {
 		beego.NSNamespace("/hook",
 			beego.NSRouter("/on_stream_none_reader", &controllers.HookController{}, "post:StopHook"),
 			beego.NSRouter("/on_publish", &controllers.HookController{}, "post:PublishHook"),
-			beego.NSRouter("/on_record_mp4", &controllers.HookController{}, "RecordMP4Hook"),
+			beego.NSRouter("/on_record_mp4", &controllers.HookController{}, "post:RecordMP4Hook"),
 			beego.NSRouter("/on_http_access", &controllers.HookController{}, "post:HTTPAccessHook"),
 		),
 	)
