@@ -23,17 +23,17 @@ const (
 )
 
 var (
-	FreeEHomeCodeMap  map[int64]string
-	UDPAddr           string   //udp服务地址
-	STSAddr           string   //STS服务地址
-	StreamStartIP     string   //实时直播流推送配置IP
-	StreamStartPort   int64    //实时直播流推送配置Port
-	WaitStreamURLTime int64    //等待实时直播URL超时时间
-	StreamIP          []string //用于组合实时直播播放URL
-	HLSPort           []string
-	RTMPPort          []string
-	RTSPPort          []string
-	XMLConfigInfo     XMLConfig //解析配置文件中的XML文件
+	FreeEHomeCodeMap      map[int64]string
+	UDPAddr               string   //udp服务地址
+	StreamStartIP         string   //实时直播流推送配置IP
+	StreamStartPort       int64    //实时直播流推送配置Port
+	WaitStreamSessionTime int64    //等待启动实时直播设备返回session的超时时间
+	WaitHookSessionTime   int64    //等待hook返回对应的session的超时时间
+	StreamIP              []string //用于组合实时直播播放URL
+	HLSPort               []string
+	RTMPPort              []string
+	RTSPPort              []string
+	XMLConfigInfo         XMLConfig //解析配置文件中的XML文件
 )
 
 func init() {
@@ -43,7 +43,7 @@ func init() {
 		FreeEHomeParameterError:          "Parameter Error",
 		FreeEHomeUnauthorized:            "Unauthorized or invalid authCode",
 		FreeEHomeDeviceNotOnline:         "Device Not Online",
-		FreeEHomeRequestTimeout:          "Request Timeout With STS",
+		FreeEHomeRequestTimeout:          "Request Timeout",
 		FreeEHomeServerError:             "Server Error",
 		FreeEHomeChannelIDNotFound:       "ChannelID Not Found",
 		FreeEHomeChannelIDNotStreamStart: "ChannelID's StreamStart Not Started",
@@ -52,11 +52,6 @@ func init() {
 	UDPAddr = beego.AppConfig.String("udpAddr")
 	if UDPAddr == "" {
 		logs.PanicLogger.Panicln("init udpAddr error, udpAddr cannot be empty")
-	}
-
-	STSAddr = beego.AppConfig.String("stsAddr")
-	if STSAddr == "" {
-		logs.PanicLogger.Panicln("init stsAddr error, stsAddr cannot be empty")
 	}
 
 	StreamStartIP = beego.AppConfig.String("streamStartIP")
@@ -69,16 +64,77 @@ func init() {
 		logs.PanicLogger.Panicln(fmt.Sprintf("init streamStartPort error: %s", err))
 	}
 
-	WaitStreamURLTime, err = beego.AppConfig.Int64("waitStreamURLTime")
-	if err != nil || WaitStreamURLTime < 0 {
-		WaitStreamURLTime = 4
-		logs.BeeLogger.Error("init waitStreamURLTime, set default value waitStreamURLTime=%d", WaitStreamURLTime)
+	WaitStreamSessionTime, err = beego.AppConfig.Int64("waitStreamSessionTime")
+	if err != nil || WaitStreamSessionTime < 0 {
+		WaitStreamSessionTime = 3
+		logs.BeeLogger.Error("init waitStreamSessionTime error, set default value waitStreamSessionTime=%d", WaitStreamSessionTime)
+	}
+
+	WaitHookSessionTime, err = beego.AppConfig.Int64("waitHookSessionTime")
+	if err != nil || WaitHookSessionTime < 0 {
+		WaitHookSessionTime = 3
+		logs.BeeLogger.Error("init waitHookSessionTime error, set default value waitHookSessionTime=%d", WaitHookSessionTime)
 	}
 
 	StreamIP = beego.AppConfig.Strings("streamIP")
+	switch len(StreamIP) {
+	case 0:
+		logs.PanicLogger.Panicln("init streamIP error, please check it")
+	case 1:
+		if StreamIP[0] == "" {
+			logs.PanicLogger.Panicln("init streamIP error, please check it")
+		}
+	default:
+		if StreamIP[1] == "" {
+			logs.PanicLogger.Panicln("init streamIP error, please check it")
+		}
+	}
 	HLSPort = beego.AppConfig.Strings("hlsPort")
+	switch len(HLSPort) {
+	case 0:
+		logs.PanicLogger.Panicln("init hlsPort error, please check it")
+	case 1:
+		if HLSPort[0] == "" {
+			logs.PanicLogger.Panicln("init hlsPort error, please check it")
+		}
+	default:
+		if HLSPort[1] == "" {
+			logs.PanicLogger.Panicln("init hlsPort error, please check it")
+		}
+	}
 	RTMPPort = beego.AppConfig.Strings("rtmpPort")
+	switch len(RTMPPort) {
+	case 0:
+		logs.PanicLogger.Panicln("init rtmpPort error, please check it")
+	case 1:
+		if RTMPPort[0] == "" {
+			logs.PanicLogger.Panicln("init rtmpPort error, please check it")
+		}
+	default:
+		if RTMPPort[1] == "" {
+			logs.PanicLogger.Panicln("init rtmpPort error, please check it")
+		}
+	}
 	RTSPPort = beego.AppConfig.Strings("rtspPort")
+	switch len(RTSPPort) {
+	case 0:
+		logs.PanicLogger.Panicln("init rtspPort error, please check it")
+	case 1:
+		if RTSPPort[0] == "" {
+			logs.PanicLogger.Panicln("init rtspPort error, please check it")
+		}
+	default:
+		if RTSPPort[1] == "" {
+			logs.PanicLogger.Panicln("init rtspPort error, please check it")
+		}
+	}
+
+	if len(StreamIP) > 1 {
+		//当区分内网和外网时，端口配置必须保证有前两个是非空值
+		if len(HLSPort) <= 1 || len(RTMPPort) <= 1 || len(RTSPPort) <= 1 {
+			logs.PanicLogger.Panicln("distinguish between intranet and extranet, please check it")
+		}
+	}
 
 	appPath := tools.GetAbsPath()
 	os.Chdir(appPath)

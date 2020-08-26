@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	AuthCheck *cache.Cache
+	AuthCheck   *cache.Cache
+	HookSession *cache.Cache //单独使用这个存储hook返回的session是因为hook有时候会先于设备返回session
 )
 
 func init() {
@@ -25,12 +26,12 @@ func init() {
 	}
 
 	AuthCheck = cache.New(time.Duration(authCodeDefaultExpiration)*time.Second, time.Duration(authCodeCleanupInterval)*time.Second)
+	HookSession = cache.New(time.Duration(authCodeDefaultExpiration)*time.Second, time.Duration(authCodeCleanupInterval)*time.Second)
 }
 
 type AuthClient struct {
-	Username     string            //登录用户名
-	Password     string            //登录密码
-	RemoteAddr   string            //客户端地址
-	StreamURLMap map[string]string //返回实时直播获得的streamURL
-	AuthCode     string            //鉴权校验码
+	Username   string //登录用户名
+	Password   string //登录密码
+	RemoteAddr string //客户端地址
+	AuthCode   string //鉴权校验码
 }

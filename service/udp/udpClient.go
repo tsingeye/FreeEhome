@@ -36,10 +36,9 @@ type ClientForUDP struct {
 }
 
 type SessionInfo struct {
-	DeviceID   string
-	ChannelID  string
-	Session    string
-	SessionURL string
+	DeviceID  string
+	ChannelID string
+	Session   string
 }
 
 type SequenceInfo struct {
@@ -483,32 +482,24 @@ func (gateway *GatewayForUDP) inviteStreamHandle(utf8Data []byte, sequence uint6
 		return
 	}
 	if resInviteStreamData.Status == 200 {
-		logs.BeeLogger.Info("deviceID=%s inviteStream start success, get session=%s", sequenceInfo.DeviceID, resInviteStreamData.Session)
-		fmt.Printf("%s deviceID=%s inviteStream start success, get session=%s\n", time.Now().Format("2006-01-02 15:04:05"), sequenceInfo.DeviceID, resInviteStreamData.Session)
-		//实时直播启动成功，返回session
-		sessionURL := getSessionURLFromSTS(resInviteStreamData.Session)
-		if sessionURL != "" {
-			//成功获得STS服务器返回的sessionURL
-			gateway.Lock()
-			udpClient := gateway.UDPClientList[sequenceInfo.DeviceID]
-			if udpClient == nil {
-				logs.BeeLogger.Error("get sessionURL from STS success, deviceID=%s, but UDPClientList[%s] is nil, please check it", sequenceInfo.DeviceID, sequenceInfo.DeviceID)
-				gateway.Unlock()
-				return
-			}
+		logs.BeeLogger.Info("deviceID=%s, channelID=%s inviteStream start success, get session=%s", sequenceInfo.DeviceID, sequenceInfo.ChannelID, resInviteStreamData.Session)
+		fmt.Printf("%s deviceID=%s, channelID=%s inviteStream start success, get session=%s\n", time.Now().Format("2006-01-02 15:04:05"), sequenceInfo.DeviceID, sequenceInfo.ChannelID, resInviteStreamData.Session)
 
-			udpClient.Sessions[sequenceInfo.ChannelID] = &SessionInfo{
-				DeviceID:   sequenceInfo.DeviceID,
-				ChannelID:  sequenceInfo.ChannelID,
-				Session:    resInviteStreamData.Session,
-				SessionURL: sessionURL,
-			}
-			gateway.UDPClientList[sequenceInfo.DeviceID] = udpClient
+		gateway.Lock()
+		udpClient := gateway.UDPClientList[sequenceInfo.DeviceID]
+		if udpClient == nil {
+			logs.BeeLogger.Error("get sessionURL success, deviceID=%s, channelID=%s, but UDPClientList[%s] is nil, please check it", sequenceInfo.DeviceID, sequenceInfo.ChannelID, sequenceInfo.DeviceID)
 			gateway.Unlock()
-
-			logs.BeeLogger.Info("deviceID=%s inviteStream start success, get session=%s, get sessionURL=%s", sequenceInfo.DeviceID, resInviteStreamData.Session, sessionURL)
-			fmt.Printf("%s deviceID=%s inviteStream start success, get session=%s, get sessionURL=%s\n", time.Now().Format("2006-01-02 15:04:05"), sequenceInfo.DeviceID, resInviteStreamData.Session, sessionURL)
+			return
 		}
+
+		udpClient.Sessions[sequenceInfo.ChannelID] = &SessionInfo{
+			DeviceID:  sequenceInfo.DeviceID,
+			ChannelID: sequenceInfo.ChannelID,
+			Session:   resInviteStreamData.Session,
+		}
+		gateway.UDPClientList[sequenceInfo.DeviceID] = udpClient
+		gateway.Unlock()
 	} else {
 		logs.BeeLogger.Info("deviceID=%s inviteStream start failed, status=%d", sequenceInfo.DeviceID, resInviteStreamData.Status)
 		fmt.Printf("%s deviceID=%s inviteStream start failed, status=%d\n", time.Now().Format("2006-01-02 15:04:05"), sequenceInfo.DeviceID, resInviteStreamData.Status)
