@@ -80,12 +80,11 @@ func init() {
 	switch len(StreamIP) {
 	case 0:
 		logs.PanicLogger.Panicln("init streamIP error, please check it")
-	case 1:
+	default:
 		if StreamIP[0] == "" {
 			logs.PanicLogger.Panicln("init streamIP error, please check it")
 		}
-	default:
-		if StreamIP[1] == "" {
+		if len(StreamIP) >= 2 && StreamIP[1] == "" {
 			logs.PanicLogger.Panicln("init streamIP error, please check it")
 		}
 	}
@@ -93,12 +92,11 @@ func init() {
 	switch len(HLSPort) {
 	case 0:
 		logs.PanicLogger.Panicln("init hlsPort error, please check it")
-	case 1:
+	default:
 		if HLSPort[0] == "" {
 			logs.PanicLogger.Panicln("init hlsPort error, please check it")
 		}
-	default:
-		if HLSPort[1] == "" {
+		if len(HLSPort) >= 2 && HLSPort[1] == "" {
 			logs.PanicLogger.Panicln("init hlsPort error, please check it")
 		}
 	}
@@ -106,12 +104,11 @@ func init() {
 	switch len(RTMPPort) {
 	case 0:
 		logs.PanicLogger.Panicln("init rtmpPort error, please check it")
-	case 1:
+	default:
 		if RTMPPort[0] == "" {
 			logs.PanicLogger.Panicln("init rtmpPort error, please check it")
 		}
-	default:
-		if RTMPPort[1] == "" {
+		if len(RTMPPort) >= 2 && RTMPPort[1] == "" {
 			logs.PanicLogger.Panicln("init rtmpPort error, please check it")
 		}
 	}
@@ -119,12 +116,11 @@ func init() {
 	switch len(RTSPPort) {
 	case 0:
 		logs.PanicLogger.Panicln("init rtspPort error, please check it")
-	case 1:
+	default:
 		if RTSPPort[0] == "" {
 			logs.PanicLogger.Panicln("init rtspPort error, please check it")
 		}
-	default:
-		if RTSPPort[1] == "" {
+		if len(RTSPPort) >= 2 && RTSPPort[1] == "" {
 			logs.PanicLogger.Panicln("init rtspPort error, please check it")
 		}
 	}
