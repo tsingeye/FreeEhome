@@ -40,15 +40,15 @@ func (s *sessions) GetAll() map[string]*SessionInfo {
 	return s.SessionMap
 }
 
-//过滤查询session对应的deviceID
-func (s *sessions) Filter(session string) string {
+//过滤查询session对应的channelID
+func (s *sessions) Filter(session string) (string, string) {
 	for _, v := range s.GetAll() {
 		if v.Session == session {
-			return v.DeviceID
+			return v.DeviceID, v.ChannelID
 		}
 	}
 
-	return ""
+	return "", ""
 }
 
 func (s *sessions) Delete(channelID string) {

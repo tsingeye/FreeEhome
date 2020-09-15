@@ -7,6 +7,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"log"
+	"math/big"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -23,6 +24,13 @@ func GetMD5String(data string) string {
 	h := md5.New()
 	h.Write([]byte(data))
 	return strings.ToUpper(hex.EncodeToString(h.Sum(nil)))
+}
+
+//十六进制转十进制
+func HexToBigInt(hex string) *big.Int {
+	bigInt := new(big.Int)
+	num, _ := bigInt.SetString(hex, 16)
+	return num
 }
 
 //生成UUID

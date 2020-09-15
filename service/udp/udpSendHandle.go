@@ -166,3 +166,16 @@ func SendByeStream(authCode, deviceID, channelID string) int64 {
 
 	return config.FreeEHomeSuccessOK
 }
+
+//收到Hook关闭信令时删除内存中无效的session
+func StreamNotFound(deviceID, channelID string) {
+	gw.Lock()
+	udpClient := gw.UDPClientList[deviceID]
+	if udpClient == nil {
+		gw.Unlock()
+		return
+	}
+	delete(udpClient.Sessions, channelID)
+	gw.UDPClientList[deviceID] = udpClient
+	gw.Unlock()
+}

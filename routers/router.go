@@ -40,6 +40,7 @@ func init() {
 			beego.NSRouter("/on_publish", &controllers.HookController{}, "post:PublishHook"),
 			beego.NSRouter("/on_record_mp4", &controllers.HookController{}, "post:RecordMP4Hook"),
 			beego.NSRouter("/on_http_access", &controllers.HookController{}, "post:HTTPAccessHook"),
+			beego.NSRouter("/on_stream_not_found", &controllers.HookController{}, "post:StreamNotFound"),
 		),
 	)
 
