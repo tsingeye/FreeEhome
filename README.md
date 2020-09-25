@@ -91,3 +91,5 @@ timeoutSec=20
 - 以服务方式运行:双击执行`install.bat`即可安装为系统服务；`uninstall.bat`为卸载系统服务；`MediaServer`暂不支持Windows系统服务。
 # REST接口
 参见apidoc
+# 技术交流
+QQ群： 1033175645
