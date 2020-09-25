@@ -30,6 +30,8 @@
     - 双击uninstall.bat卸载服务。
   
 # 使用说明
+## 下载程序
+[v1.0](https://github.com/tsingeye/FreeEhome/releases)
 ## 修改CMS配置
 - 进入FreeEhomeCMS=>conf文件夹
 - 根据app.conf文件中注释，按实际情况修改，如下：
