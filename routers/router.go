@@ -21,7 +21,7 @@ func init() {
 			//查询设备列表
 			beego.NSRouter("/list", &controllers.DeviceController{}, "get:DeviceList"),
 			//查询通道列表
-			beego.NSRouter("/channelList", &controllers.DeviceController{}, "get:ChannelList"),
+			beego.NSRouter("/channellist", &controllers.DeviceController{}, "get:ChannelList"),
 		),
 		//实时直播接口
 		beego.NSNamespace("/stream",
@@ -36,7 +36,7 @@ func init() {
 	//Hook接口
 	nsHook := beego.NewNamespace("/index",
 		beego.NSNamespace("/hook",
-			beego.NSRouter("/on_stream_none_reader", &controllers.HookController{}, "post:StopHook"),
+			beego.NSRouter("/on_stream_none_reader", &controllers.HookController{}, "post:StreamNoneReaderHook"),
 			beego.NSRouter("/on_publish", &controllers.HookController{}, "post:PublishHook"),
 			beego.NSRouter("/on_record_mp4", &controllers.HookController{}, "post:RecordMP4Hook"),
 			beego.NSRouter("/on_http_access", &controllers.HookController{}, "post:HTTPAccessHook"),

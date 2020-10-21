@@ -89,8 +89,10 @@ func Save(tab interface{}) bool {
 }
 
 //分页查询
-func Limit(tab interface{}, start, limit uint64, where ...interface{}) {
-	gormDB.Limit(limit).Offset(start).Find(tab, where...)
+func Limit(out interface{}, tableName string, limit, offset int, where ...interface{}) {
+	if err := gormDB.Limit(limit).Offset(offset).Find(out, where...).Error; err != nil {
+		logs.BeeLogger.Error("paging query error in the %s table: %s", tableName, err)
+	}
 }
 
 //执行更新操作，更新更改字段
@@ -119,10 +121,9 @@ func First(tab interface{}, whereMap interface{}) int {
 	return 0
 }
 
-//查询所有记录，参数一为数组名，参数二为table结构体
-func Find(array, tab interface{}) {
-	tableName := GetTableName(tab)
-	if err := gormDB.Find(array).Error; err != nil {
+//查询所有记录，参数一为结构体数组指针，参数二为表名，后面参数是查询套件
+func Find(out interface{}, tableName string, where ...interface{}) {
+	if err := gormDB.Find(out, where...).Error; err != nil {
 		logs.BeeLogger.Error("%s table run db.Find() failed: %s", tableName, err)
 	}
 }

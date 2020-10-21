@@ -11,8 +11,8 @@ type DeviceList struct {
 	DeviceName   string            `gorm:"column:DeviceName" json:"deviceName"`
 	SerialNumber string            `gorm:"column:SerialNumber" json:"serialNumber"` //设备序列号
 	Status       string            `gorm:"column:Status" json:"status"`             //设备在线状态，ON-在线，OFF-离线
-	CreatedAt    config.TimeNormal `gorm:"column:CreatedAt" json:"-"`
-	UpdatedAt    config.TimeNormal `gorm:"column:UpdatedAt" json:"-"`
+	CreatedAt    config.TimeNormal `gorm:"column:CreatedAt" json:"createdAt"`
+	UpdatedAt    config.TimeNormal `gorm:"column:UpdatedAt" json:"updatedAt"`
 }
 
 //设置表名
@@ -26,8 +26,8 @@ type ChannelList struct {
 	ChannelName string            `gorm:"column:ChannelName" json:"channelName"`
 	DeviceID    string            `gorm:"column:DeviceID" json:"deviceID"`
 	Status      string            `gorm:"column:Status" json:"status"` //通道在线状态，ON-在线，OFF-离线
-	CreatedAt   config.TimeNormal `gorm:"column:CreatedAt" json:"-"`
-	UpdatedAt   config.TimeNormal `gorm:"column:UpdatedAt" json:"-"`
+	CreatedAt   config.TimeNormal `gorm:"column:CreatedAt" json:"createdAt"`
+	UpdatedAt   config.TimeNormal `gorm:"column:UpdatedAt" json:"updatedAt"`
 }
 
 //设置表名

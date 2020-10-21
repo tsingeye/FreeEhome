@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"github.com/tsingeye/FreeEhome/config"
 	"github.com/tsingeye/FreeEhome/models"
-	"github.com/tsingeye/FreeEhome/tools/logs"
 	"strings"
 )
 
@@ -16,20 +14,21 @@ type DeviceController struct {
 }
 
 /**
- * @api {get} /api/v1/device/list 分页查询设备列表
+ * @api {get} /api/v1/device/list 设备列表
  * @apiVersion 1.0.0
  * @apiGroup device
  * @apiName DeviceList
  * @apiParam {String} authCode 授权码
- * @apiParam {Number} page 页码，分页时应从1开始，当page=limit=0时不分页查询所有设备信息
- * @apiParam {Number} limit 分页大小
- * @apiParam {String} [status] 设备状态，ON-在线；OFF-离线，其它则分页查询所有设备信息
+ * @apiParam {Number} [page] 页码，分页时默认从1开始
+ * @apiParam {Number} [limit] 分页大小，默认100
+ * @apiParam {String} [status] 按设备状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录
+ * @apiParam {bool} [noPage] 是否不分页，true：不分页；false：分页。布尔类型不区分大小写，默认分页
  * @apiSuccessExample  {json} Response-Example
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
  *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码
- *   "totalCount": 100, //设备列表总数
+ *   "totalCount": 100, //符合status状态的设备总数
  *   "deviceList": [
  *     {
  *       "deviceID": "ys666", //设备ID
@@ -37,102 +36,92 @@ type DeviceController struct {
  *       "deviceName": "ys", //设备名
  *       "serialNumber": "666666", //设备序列号
  *       "status": "ON" //设备状态：ON-在线；OFF-离线
+ *       "createdAt": "2020-10-20 10-20-10", //创建时间
+ *       "updatedAt": "2020-10-20 10-20-10" //更新时间
  *     }
  *    ]
  * }
  */
 func (d *DeviceController) DeviceList() {
-	authCode := d.GetString("authCode")
-	replyData := map[string]interface{}{
-		"errCode":  config.FreeEHomeParameterError,
-		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeParameterError],
-		"authCode": authCode,
+	//页码，可选，分页时默认从1开始
+	page, err := d.GetInt("page")
+	if err != nil || page <= 0 {
+		page = 1
 	}
 
-	defer func() {
-		d.Data["json"] = replyData
-		d.ServeJSON()
-	}()
+	//分页大小，可选，默认100
+	limit, err := d.GetInt("limit")
+	if err != nil || limit <= 0 {
+		limit = 100
+	}
 
-	//页码编号，分页时应从1开始
-	page, err := d.GetUint64("page")
+	//按设备状态查询，在线：ON；离线：OFF，默认查询所有设备列表记录
+	status := strings.ToUpper(d.GetString("status"))
+
+	//是否不分页，默认分页
+	noPage, err := d.GetBool("noPage")
 	if err != nil {
-		logs.BeeLogger.Error("DeviceList() --->authCode=%s, parameter <page> type error: %s", authCode, err)
-		return
+		noPage = false
 	}
 
-	//分页大小
-	limit, err := d.GetUint64("limit")
-	if err != nil {
-		logs.BeeLogger.Error("DeviceList() --->authCode=%s, parameter <limit> type error: %s", authCode, err)
-		return
-	}
-
-	if page == 0 && limit != 0 {
-		return
-	}
-
-	replyData = models.DeviceList(authCode, page, limit, strings.ToUpper(d.GetString("status")))
-	return
+	d.Data["json"] = models.DeviceList(page, limit, status, noPage)
+	d.ServeJSON()
 }
 
 /**
- * @api {get} /api/v1/device/channelList 分页查询设备通道列表
+ * @api {get} /api/v1/device/channelList 设备通道列表
  * @apiVersion 1.0.0
  * @apiGroup device
  * @apiName ChannelList
  * @apiParam {String} authCode 授权码
- * @apiParam {String} deviceID 设备ID
- * @apiParam {Number} page 页码，分页时应从1开始，当page=limit=0时不分页查询所有设备通道信息
- * @apiParam {Number} limit 分页大小
- * @apiParam {String} [status] 设备状态，ON-在线；OFF-离线，其它则分页查询所有设备通道信息
+ * @apiParam {String} deviceID 设备编号，不为空查询该设备下的所有通道，否则查询整个通道列表
+ * @apiParam {Number} [page] 页码，分页时默认从1开始
+ * @apiParam {Number} [limit] 分页大小，默认为100
+ * @apiParam {String} [status] 按通道状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录
+ * @apiParam {bool} [noPage] 是否不分页，true：不分页；false：分页。布尔类型不区分大小写，默认分页
  * @apiSuccessExample  {json} Response-Example
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
  *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码
- *   "totalCount": 100 //设备通道列表总数
+ *   "totalCount": 100 //符合status状态的通道总数
  *   "deviceList": [
  *     {
  *       "channelID": "ys666_123", //通道ID
  *       "channelName": "Camera123", //通道名
  *       "deviceID": "ys666", //设备ID
  *       "status": "ON" //设备状态：ON-在线；OFF-离线
+ *       "createdAt": "2020-10-20 10-20-10", //创建时间
+ *       "updatedAt": "2020-10-20 10-20-10" //更新时间
  *     }
  *   ]
  * }
  */
 func (d *DeviceController) ChannelList() {
-	authCode := d.GetString("authCode")
-	replyData := map[string]interface{}{
-		"errCode":  config.FreeEHomeParameterError,
-		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeParameterError],
-		"authCode": authCode,
+	//设备编号
+	deviceID := d.GetString("deviceID")
+
+	//页码，可选，分页时默认从1开始
+	page, err := d.GetInt("page")
+	if err != nil || page <= 0 {
+		page = 1
 	}
 
-	defer func() {
-		d.Data["json"] = replyData
-		d.ServeJSON()
-	}()
+	//分页大小，可选，默认100
+	limit, err := d.GetInt("limit")
+	if err != nil || limit <= 0 {
+		limit = 100
+	}
 
-	//页码编号，分页时应从1开始
-	page, err := d.GetUint64("page")
+	//按通道状态查询，在线：ON；离线：OFF，默认查询所有记录
+	status := strings.ToUpper(d.GetString("status"))
+
+	//是否不分页，默认分页
+	noPage, err := d.GetBool("noPage")
 	if err != nil {
-		logs.BeeLogger.Error("ChannelList() --->authCode=%s, parameter <page> type error: %s", authCode, err)
-		return
+		noPage = false
 	}
 
-	//分页大小
-	limit, err := d.GetUint64("limit")
-	if err != nil {
-		logs.BeeLogger.Error("ChannelList() --->authCode=%s, parameter <limit> type error: %s", authCode, err)
-		return
-	}
-
-	if page == 0 && limit != 0 {
-		return
-	}
-
-	replyData = models.ChannelList(authCode, d.GetString("deviceID"), page, limit, strings.ToUpper(d.GetString("status")))
-	return
+	d.Data["json"] = models.ChannelList(deviceID, page, limit, status, noPage)
+	d.ServeJSON()
 }

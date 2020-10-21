@@ -2,7 +2,7 @@
   {
     "type": "get",
     "url": "/api/v1/device/channelList",
-    "title": "分页查询设备通道列表",
+    "title": "设备通道列表",
     "version": "1.0.0",
     "group": "device",
     "name": "ChannelList",
@@ -21,28 +21,35 @@
             "type": "String",
             "optional": false,
             "field": "deviceID",
-            "description": "<p>设备ID</p>"
+            "description": "<p>设备编号，不为空查询该设备下的所有通道，否则查询整个通道列表</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "page",
-            "description": "<p>页码，分页时应从1开始，当page=limit=0时不分页查询所有设备通道信息</p>"
+            "description": "<p>页码，分页时默认从1开始</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "limit",
-            "description": "<p>分页大小</p>"
+            "description": "<p>分页大小，默认为100</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": true,
             "field": "status",
-            "description": "<p>设备状态，ON-在线；OFF-离线，其它则分页查询所有设备通道信息</p>"
+            "description": "<p>按通道状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "bool",
+            "optional": true,
+            "field": "noPage",
+            "description": "<p>是否不分页，true：不分页；false：分页。布尔类型不区分大小写，默认分页</p>"
           }
         ]
       }
@@ -51,7 +58,7 @@
       "examples": [
         {
           "title": "Response-Example",
-          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"authCode\": \"188B7DF06C77FDBE69EB25BFE946D33E\" //授权码\n  \"totalCount\": 100 //设备通道列表总数\n  \"deviceList\": [\n    {\n      \"channelID\": \"ys666_123\", //通道ID\n      \"channelName\": \"Camera123\", //通道名\n      \"deviceID\": \"ys666\", //设备ID\n      \"status\": \"ON\" //设备状态：ON-在线；OFF-离线\n    }\n  ]\n}",
+          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"authCode\": \"188B7DF06C77FDBE69EB25BFE946D33E\" //授权码\n  \"totalCount\": 100 //符合status状态的通道总数\n  \"deviceList\": [\n    {\n      \"channelID\": \"ys666_123\", //通道ID\n      \"channelName\": \"Camera123\", //通道名\n      \"deviceID\": \"ys666\", //设备ID\n      \"status\": \"ON\" //设备状态：ON-在线；OFF-离线\n      \"createdAt\": \"2020-10-20 10-20-10\", //创建时间\n      \"updatedAt\": \"2020-10-20 10-20-10\" //更新时间\n    }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -62,7 +69,7 @@
   {
     "type": "get",
     "url": "/api/v1/device/list",
-    "title": "分页查询设备列表",
+    "title": "设备列表",
     "version": "1.0.0",
     "group": "device",
     "name": "DeviceList",
@@ -79,23 +86,30 @@
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "page",
-            "description": "<p>页码，分页时应从1开始，当page=limit=0时不分页查询所有设备信息</p>"
+            "description": "<p>页码，分页时默认从1开始</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "limit",
-            "description": "<p>分页大小</p>"
+            "description": "<p>分页大小，默认100</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": true,
             "field": "status",
-            "description": "<p>设备状态，ON-在线；OFF-离线，其它则分页查询所有设备信息</p>"
+            "description": "<p>按设备状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "bool",
+            "optional": true,
+            "field": "noPage",
+            "description": "<p>是否不分页，true：不分页；false：分页。布尔类型不区分大小写，默认分页</p>"
           }
         ]
       }
@@ -104,7 +118,7 @@
       "examples": [
         {
           "title": "Response-Example",
-          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"authCode\": \"188B7DF06C77FDBE69EB25BFE946D33E\" //授权码\n  \"totalCount\": 100, //设备列表总数\n  \"deviceList\": [\n    {\n      \"deviceID\": \"ys666\", //设备ID\n      \"deviceIP\": \"192.168.1.169\", //设备IP\n      \"deviceName\": \"ys\", //设备名\n      \"serialNumber\": \"666666\", //设备序列号\n      \"status\": \"ON\" //设备状态：ON-在线；OFF-离线\n    }\n   ]\n}",
+          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"authCode\": \"188B7DF06C77FDBE69EB25BFE946D33E\" //授权码\n  \"totalCount\": 100, //符合status状态的设备总数\n  \"deviceList\": [\n    {\n      \"deviceID\": \"ys666\", //设备ID\n      \"deviceIP\": \"192.168.1.169\", //设备IP\n      \"deviceName\": \"ys\", //设备名\n      \"serialNumber\": \"666666\", //设备序列号\n      \"status\": \"ON\" //设备状态：ON-在线；OFF-离线\n      \"createdAt\": \"2020-10-20 10-20-10\", //创建时间\n      \"updatedAt\": \"2020-10-20 10-20-10\" //更新时间\n    }\n   ]\n}",
           "type": "json"
         }
       ]
