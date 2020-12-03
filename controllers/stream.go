@@ -21,9 +21,15 @@ type StreamController struct {
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
- *   "streamURL": "https://www.baidu.com/" //实时直播URL
+ *   "sessionURL": {
+ *     "rtmp": "rtmp://ip:port/rtp/xxx",
+ *     "flv": "http://ip:port/rtp/xxx.flv",
+ *     "rtsp": "rtsp://ip:port/rtp/xxx",
+ *     "hls": "http://ip:port/rtp/xxx/hls.m3u8",
+ *   }
  * }
  */
+
 func (s *StreamController) StartStream() {
 	token := s.GetString("token")
 	//通道编号

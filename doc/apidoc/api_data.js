@@ -145,7 +145,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response-Example",
-          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"streamURL\": \"https://www.baidu.com/\" //实时直播URL\n}",
+          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n  \"sessionURL\": {\n    \"rtmp\": \"rtmp://ip:port/rtp/xxx\",\n    \"flv\": \"http://ip:port/rtp/xxx.flv\",\n    \"rtsp\": \"rtsp://ip:port/rtp/xxx\",\n    \"hls\": \"http://ip:port/rtp/xxx/hls.m3u8\",\n  }\n}",
           "type": "json"
         }
       ]
