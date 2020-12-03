@@ -6,33 +6,41 @@ import (
 	"github.com/tsingeye/FreeEhome/service/udp"
 	"github.com/tsingeye/FreeEhome/tools"
 	"github.com/tsingeye/FreeEhome/tools/logs"
+	"github.com/tsingeye/FreeEhome/tools/sqlDB"
 	"time"
 )
 
 //先判断内存中是否存在可用的sessionURL，若存在则直接返回
-func StartStream(authCode, deviceID, channelID string) (replyData map[string]interface{}) {
+func StartStream(token, channelID string) (replyData map[string]interface{}) {
 	sessionInfo := config.StreamSession.Get(channelID)
 	if sessionInfo != nil && sessionInfo.SessionURL != nil {
 		replyData = map[string]interface{}{
 			"errCode":    config.FreeEHomeSuccessOK,
 			"errMsg":     config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
-			"authCode":   authCode,
 			"sessionURL": sessionInfo.SessionURL,
 		}
 		return
 	}
 
-	errCode, session := udp.SendInviteStream(authCode, deviceID, channelID)
+	var channel sqlDB.ChannelList
+	if !sqlDB.First(&channel, "ChannelID = ?", channelID) {
+		replyData = map[string]interface{}{
+			"errCode": config.FreeEHomeParameterError,
+			"errMsg":  config.FreeEHomeCodeMap[config.FreeEHomeParameterError],
+		}
+		return
+	}
+
+	errCode, session := udp.SendInviteStream(token, channel.DeviceID, channelID)
 
 	replyData = map[string]interface{}{
-		"errCode":  errCode,
-		"errMsg":   config.FreeEHomeCodeMap[errCode],
-		"authCode": authCode,
+		"errCode": errCode,
+		"errMsg":  config.FreeEHomeCodeMap[errCode],
 	}
 
 	if errCode == config.FreeEHomeSuccessOK {
-		fmt.Printf("%s authCode=%s, DeviceID=%s, ChannelID=%s, get session=%s\n", time.Now().Format("2006-01-02 15:04:05"), authCode, deviceID, channelID, session)
-		logs.BeeLogger.Emergency("authCode=%s, DeviceID=%s, ChannelID=%s, get session=%s", authCode, deviceID, channelID, session)
+		fmt.Printf("%s token=%s, DeviceID=%s, ChannelID=%s, get session=%s\n", time.Now().Format("2006-01-02 15:04:05"), token, channel.DeviceID, channelID, session)
+		logs.BeeLogger.Emergency("token=%s, DeviceID=%s, ChannelID=%s, get session=%s", token, channel.DeviceID, channelID, session)
 
 		hexSession, ok := config.HookSession.Get(session)
 		if ok {
@@ -43,7 +51,7 @@ func StartStream(authCode, deviceID, channelID string) (replyData map[string]int
 			sessionURL := getSessionURL(hexSession.(string))
 			sessionInfo = &config.SessionInfo{
 				Session:    session,
-				DeviceID:   deviceID,
+				DeviceID:   channel.DeviceID,
 				ChannelID:  channelID,
 				SessionURL: sessionURL,
 			}
@@ -58,7 +66,7 @@ func StartStream(authCode, deviceID, channelID string) (replyData map[string]int
 				sessionURL := getSessionURL(hexSession)
 				sessionInfo = &config.SessionInfo{
 					Session:    session,
-					DeviceID:   deviceID,
+					DeviceID:   channel.DeviceID,
 					ChannelID:  channelID,
 					SessionURL: sessionURL,
 				}
@@ -66,16 +74,16 @@ func StartStream(authCode, deviceID, channelID string) (replyData map[string]int
 				replyData["sessionURL"] = sessionURL
 			} else {
 				//在规定的时间内未等到hook返回的session，需清除内存中的session
-				go udp.SendByeStream(authCode, deviceID, channelID)
+				go udp.SendByeStream(token, channel.DeviceID, channelID)
 
 				replyData = map[string]interface{}{
-					"errCode":  config.FreeEHomeRequestTimeout,
-					"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeRequestTimeout],
-					"authCode": authCode,
+					"errCode": config.FreeEHomeRequestTimeout,
+					"errMsg":  config.FreeEHomeCodeMap[config.FreeEHomeRequestTimeout],
 				}
 			}
 		}
 	}
+
 	return
 }
 
@@ -121,13 +129,4 @@ func waitSessionFromHook(session string) (bool, string) {
 			}
 		}
 	}
-}
-
-func StopStream(authCode, deviceID, channelID string) (replyData map[string]interface{}) {
-	replyData = map[string]interface{}{
-		"errCode":  config.FreeEHomeSuccessOK,
-		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
-		"authCode": authCode,
-	}
-	return
 }

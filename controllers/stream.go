@@ -11,50 +11,24 @@ type StreamController struct {
 }
 
 /**
- * @api {get} /api/v1/stream/start 开始实时直播
+ * @api {get} /api/v1/channels/:id/stream 开始实时直播
  * @apiVersion 1.0.0
  * @apiGroup stream
- * @apiName Start
- * @apiParam {String} authCode 授权码
- * @apiParam {String} deviceID 设备ID
- * @apiParam {String} channelID 通道ID
+ * @apiName StartStream
+ * @apiDescription 注释：:id参数是channelID
+ * @apiParam {String} token 授权码
  * @apiSuccessExample  {json} Response-Example
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E", //授权码
  *   "streamURL": "https://www.baidu.com/" //实时直播URL
  * }
  */
-func (s *StreamController) Start() {
-	authCode := s.GetString("authCode")
-	deviceID := s.GetString("deviceID")
-	channelID := s.GetString("channelID")
+func (s *StreamController) StartStream() {
+	token := s.GetString("token")
+	//通道编号
+	channelID := s.Ctx.Input.Param(":id")
 
-	s.Data["json"] = models.StartStream(authCode, deviceID, channelID)
-	s.ServeJSON()
-}
-
-/**
- * @api {get} /api/v1/stream/stop 关闭实时直播
- * @apiVersion 1.0.0
- * @apiGroup stream
- * @apiName Stop
- * @apiParam {String} authCode 授权码
- * @apiParam {String} deviceID 设备ID
- * @apiParam {String} channelID 通道ID
- * @apiSuccessExample  {json} Response-Example
- * {
- *   "errCode": 200,
- *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码
- * }
- */
-func (s *StreamController) Stop() {
-	authCode := s.GetString("authCode")
-	deviceID := s.GetString("deviceID")
-	channelID := s.GetString("channelID")
-
-	s.Data["json"] = models.StopStream(authCode, deviceID, channelID)
+	s.Data["json"] = models.StartStream(token, channelID)
 	s.ServeJSON()
 }

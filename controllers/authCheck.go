@@ -4,8 +4,6 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/patrickmn/go-cache"
 	"github.com/tsingeye/FreeEhome/config"
-	"github.com/tsingeye/FreeEhome/tools"
-	"strings"
 )
 
 type AuthCheckController struct {
@@ -15,19 +13,18 @@ type AuthCheckController struct {
 func (a *AuthCheckController) Prepare() {
 	controllerName, actionName := a.GetControllerAndAction()
 	//fmt.Println("controllerName: ", controllerName, " actionName: ", actionName)
-	controllerAction := tools.StringsJoin(strings.ToLower(controllerName[0:len(controllerName)-10]), "/", strings.ToLower(actionName))
 	//非登录时需进行登录权限验证
-	if controllerAction != "system/login" {
-		a.authCheck(controllerName, actionName)
+	if controllerName != "SystemController" || actionName != "Login" {
+		a.auth()
 	}
 }
 
-func (a *AuthCheckController) authCheck(controllerName, actionName string) {
-	authCode := a.GetString("authCode")
-	authClient, ok := config.AuthCheck.Get(authCode)
+func (a *AuthCheckController) auth() {
+	token := a.GetString("token")
+	value, ok := config.AuthCheck.Get(token)
 	if ok {
 		//重置authCode过期时间
-		config.AuthCheck.Set(authCode, authClient, cache.DefaultExpiration)
+		config.AuthCheck.Set(token, value.(string), cache.DefaultExpiration)
 	} else {
 		a.Data["json"] = map[string]interface{}{
 			"errCode": config.FreeEHomeUnauthorized,

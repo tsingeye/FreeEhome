@@ -24,8 +24,8 @@ func filterUDPClientFromDeviceID(deviceID string) *ClientForUDP {
 }
 
 //发送启动实时直播流
-func SendInviteStream(authCode, deviceID, channelID string) (int64, string) {
-	fmt.Printf("%s authCode=%s, DeviceID=%s, ChannelID=%s send inviteStream\n", time.Now().Format("2006-01-02 15:04:05"), authCode, deviceID, channelID)
+func SendInviteStream(token, deviceID, channelID string) (int64, string) {
+	fmt.Printf("%s token=%s, DeviceID=%s, ChannelID=%s send inviteStream\n", time.Now().Format("2006-01-02 15:04:05"), token, deviceID, channelID)
 	udpClient := filterUDPClientFromDeviceID(deviceID)
 	if udpClient == nil {
 		return config.FreeEHomeDeviceNotOnline, ""

@@ -13,24 +13,23 @@ type SystemController struct {
 }
 
 /**
- * @api {get} /api/v1/system/login 登录
- * @apiVersion 1.0.0
+ * @api {post} /api/v1/system/login 登录
  * @apiGroup system
  * @apiName Login
- * @apiParam {String} username 用户名
- * @apiParam {String} password 密码
- * @apiSuccessExample  {json} Response-Example
- * {
- *   "errCode": 200,
- *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码，后续所有接口需验证此授权码
- * }
+ * @apiParamExample {json} Request-Example:
+ *   {
+ *     "username": "wyd",
+ *     "password": "wyd666" //32位MD5加密小写数据，暂时用户名密码不进行校验
+ *   }
+ * @apiSuccessExample {json} Success-Response:
+ *   {
+ *     "errCode": 200,
+ *     "errMsg": "Success OK",
+ *     "token": "this is token" //后面所有接口需验证此token，用法是作为URL参数使用
+ *   }
  */
 func (s *SystemController) Login() {
-	username := s.GetString("username")
-	password := s.GetString("password")
-
-	s.Data["json"] = models.Login(username, password, s.Ctx.Request.RemoteAddr)
+	s.Data["json"] = models.Login(s.Ctx.Request.RemoteAddr, s.Ctx.Input.RequestBody)
 	s.ServeJSON()
 }
 
@@ -39,7 +38,7 @@ func (s *SystemController) Login() {
  * @apiVersion 1.0.0
  * @apiGroup system
  * @apiName Logout
- * @apiParam {String} authCode 授权码
+ * @apiParam {String} token 授权码
  * @apiSuccessExample  {json} Response-Example
  * {
  *   "errCode": 200,
@@ -47,9 +46,9 @@ func (s *SystemController) Login() {
  * }
  */
 func (s *SystemController) Logout() {
-	authCode := s.GetString("authCode")
+	token := s.GetString("token")
 
-	s.Data["json"] = models.Logout(authCode)
+	s.Data["json"] = models.Logout(token)
 	s.ServeJSON()
 }
 
@@ -57,13 +56,12 @@ func (s *SystemController) Logout() {
  * @api {get} /api/v1/system/info 获取系统信息
  * @apiVersion 1.0.0
  * @apiGroup system
- * @apiName Info
- * @apiParam {String} authCode 授权码
+ * @apiName SystemInfo
+ * @apiParam {String} token 授权码
  * @apiSuccessExample  {json} Response-Example
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E",
  *   "cpuUsedPercent": "6%", //CPU使用率
  *   "virtualMemory": {
  *     "total": "8079MB", //总内存
@@ -85,9 +83,7 @@ func (s *SystemController) Logout() {
  *   }
  * }
  */
-func (s *SystemController) Info() {
-	authCode := s.GetString("authCode")
-
-	s.Data["json"] = models.SystemInfo(authCode)
+func (s *SystemController) SystemInfo() {
+	s.Data["json"] = models.SystemInfo()
 	s.ServeJSON()
 }

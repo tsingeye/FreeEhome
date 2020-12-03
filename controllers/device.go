@@ -14,11 +14,11 @@ type DeviceController struct {
 }
 
 /**
- * @api {get} /api/v1/device/list 设备列表
+ * @api {get} /api/v1/devices 设备列表
  * @apiVersion 1.0.0
  * @apiGroup device
  * @apiName DeviceList
- * @apiParam {String} authCode 授权码
+ * @apiParam {String} token 授权码
  * @apiParam {Number} [page] 页码，分页时默认从1开始
  * @apiParam {Number} [limit] 分页大小，默认100
  * @apiParam {String} [status] 按设备状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录
@@ -27,7 +27,6 @@ type DeviceController struct {
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码
  *   "totalCount": 100, //符合status状态的设备总数
  *   "deviceList": [
  *     {
@@ -69,12 +68,12 @@ func (d *DeviceController) DeviceList() {
 }
 
 /**
- * @api {get} /api/v1/device/channelList 设备通道列表
+ * @api {get} /api/v1/devices/:id/channels 查询指定设备下的通道列表
  * @apiVersion 1.0.0
  * @apiGroup device
- * @apiName ChannelList
- * @apiParam {String} authCode 授权码
- * @apiParam {String} deviceID 设备编号，不为空查询该设备下的所有通道，否则查询整个通道列表
+ * @apiName AppointChannelList
+ * @apiDescription 注释：:id参数是deviceID
+ * @apiParam {String} token 授权码
  * @apiParam {Number} [page] 页码，分页时默认从1开始
  * @apiParam {Number} [limit] 分页大小，默认为100
  * @apiParam {String} [status] 按通道状态查询，在线：ON；离线：OFF，状态值不区分大小写，非二者则默认查询所有记录
@@ -83,9 +82,8 @@ func (d *DeviceController) DeviceList() {
  * {
  *   "errCode": 200,
  *   "errMsg": "Success OK",
- *   "authCode": "188B7DF06C77FDBE69EB25BFE946D33E" //授权码
  *   "totalCount": 100 //符合status状态的通道总数
- *   "deviceList": [
+ *   "channelList": [
  *     {
  *       "channelID": "ys666_123", //通道ID
  *       "channelName": "Camera123", //通道名
@@ -97,9 +95,9 @@ func (d *DeviceController) DeviceList() {
  *   ]
  * }
  */
-func (d *DeviceController) ChannelList() {
+func (d *DeviceController) AppointChannelList() {
 	//设备编号
-	deviceID := d.GetString("deviceID")
+	deviceID := d.Ctx.Input.Param(":id")
 
 	//页码，可选，分页时默认从1开始
 	page, err := d.GetInt("page")
@@ -122,6 +120,6 @@ func (d *DeviceController) ChannelList() {
 		noPage = false
 	}
 
-	d.Data["json"] = models.ChannelList(deviceID, page, limit, status, noPage)
+	d.Data["json"] = models.AppointChannelList(deviceID, page, limit, status, noPage)
 	d.ServeJSON()
 }

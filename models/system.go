@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/patrickmn/go-cache"
 	"github.com/shirou/gopsutil/cpu"
@@ -13,34 +14,46 @@ import (
 	"time"
 )
 
-//登录
-func Login(username, password, remoteAddr string) (replyData map[string]interface{}) {
-	//授权码使用用户名+密码+UUID使用MD5加密生成
-	authCode := tools.GetMD5String(tools.StringsJoin(username, password, tools.GetUUID()))
-	authClient := &config.AuthClient{
-		Username:   username,
-		Password:   password,
-		RemoteAddr: remoteAddr,
-		AuthCode:   authCode,
-	}
-	//登录成功，记录authCode
-	config.AuthCheck.Set(authCode, authClient, cache.DefaultExpiration)
+//用于解析用户登录数据
+type userLogin struct {
+	UserName string `json:"username"`
+	Password string `json:"password"`
+}
 
-	logs.BeeLogger.Info("username=%s, password=%s login successfully, get authCode=%s", username, password, authCode)
+//登录
+func Login(remoteAddr string, requestBody []byte) (replyData map[string]interface{}) {
+	var loginData userLogin
+	if err := json.Unmarshal(requestBody, &loginData); err != nil {
+		logs.BeeLogger.Error("SystemController.Login() ---> remoteAddr=%s, json.Unmarshal() error:%s", remoteAddr, err)
+		replyData = map[string]interface{}{
+			"errCode": config.FreeEHomeParameterError,
+			"errMsg":  config.FreeEHomeCodeMap[config.FreeEHomeParameterError],
+		}
+
+		return
+	}
+
+	//授权码使用用户名+密码+UUID使用MD5加密生成
+	token := tools.GetMD5String(tools.StringsJoin(loginData.UserName, loginData.Password, tools.GetUUID()))
+
+	//登录成功，记录authCode
+	config.AuthCheck.Set(token, token, cache.DefaultExpiration)
+
+	logs.BeeLogger.Info("username=%s, password=%s login successfully, get token=%s", loginData.UserName, loginData.Password, token)
 
 	replyData = map[string]interface{}{
-		"errCode":  config.FreeEHomeSuccessOK,
-		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
-		"authCode": authCode,
+		"errCode": config.FreeEHomeSuccessOK,
+		"errMsg":  config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
+		"token":   token,
 	}
 	return
 }
 
 //登出
-func Logout(authCode string) (replyData map[string]interface{}) {
-	logs.BeeLogger.Info("user logout successfully, delete authCode=%s", authCode)
-	//登出成功，删除authCode
-	config.AuthCheck.Delete(authCode)
+func Logout(token string) (replyData map[string]interface{}) {
+	logs.BeeLogger.Info("user logout successfully, delete token=%s", token)
+	//登出成功，删除token
+	config.AuthCheck.Delete(token)
 
 	replyData = map[string]interface{}{
 		"errCode": config.FreeEHomeSuccessOK,
@@ -50,37 +63,36 @@ func Logout(authCode string) (replyData map[string]interface{}) {
 }
 
 //获取系统信息：CPU、网络、内存等v
-func SystemInfo(authCode string) (replyData map[string]interface{}) {
+func SystemInfo() (replyData map[string]interface{}) {
 	replyData = map[string]interface{}{
 		"errCode":  config.FreeEHomeServerError,
 		"errMsg":   config.FreeEHomeCodeMap[config.FreeEHomeServerError],
-		"authCode": authCode,
 	}
 
 	//CPU信息
 	percent, err := cpu.Percent(time.Second, false)
 	if err != nil {
-		logs.BeeLogger.Error("authCode=%s, cpu.Percent error: %s", authCode, err)
+		logs.BeeLogger.Error("cpu.Percent error: %s", err)
 		return
 	}
 
 	//内存信息
 	memory, err := mem.VirtualMemory()
 	if err != nil {
-		logs.BeeLogger.Error("authCode=%s, mem.VirtualMemory error: %s", authCode, err)
+		logs.BeeLogger.Error("mem.VirtualMemory error: %s", err)
 		return
 	}
 
 	//网络信息
 	beforeIO, err := net.IOCounters(false)
 	if err != nil {
-		logs.BeeLogger.Error("authCode=%s, net.IOCounters error: %s", authCode, err)
+		logs.BeeLogger.Error("net.IOCounters error: %s", err)
 		return
 	}
 	time.Sleep(1 * time.Second)
 	afterIO, err := net.IOCounters(false)
 	if err != nil {
-		logs.BeeLogger.Error("authCode=%s, net.IOCounters error: %s", authCode, err)
+		logs.BeeLogger.Error("net.IOCounters error: %s", err)
 		return
 	}
 
@@ -94,7 +106,6 @@ func SystemInfo(authCode string) (replyData map[string]interface{}) {
 	replyData = map[string]interface{}{
 		"errCode":        config.FreeEHomeSuccessOK,
 		"errMsg":         config.FreeEHomeCodeMap[config.FreeEHomeSuccessOK],
-		"authCode":       authCode,
 		"cpuUsedPercent": fmt.Sprintf("%d%s", int(percent[0]), "%"),
 		"virtualMemory": map[string]interface{}{
 			"total":       fmt.Sprintf("%dMB", memory.Total/1024/1024),
