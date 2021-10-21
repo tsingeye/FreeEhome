@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
-	uuid "github.com/satori/go.uuid"
-	"golang.org/x/text/encoding/simplifiedchinese"
 	"log"
 	"math/big"
 	"math/rand"
@@ -13,10 +11,23 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 func init() {
 	rand.Seed(time.Now().Unix())
+}
+
+//海康GPS转换公式
+var GpsCalcTransform = func(v int64) float64 {
+	_du := int64(v / 3600 / 100)
+	_fen := int64((v - _du*3600*100) / 100 / 60)
+	_miao := int64((v - _du*3600*100 - _fen*60*100) / 100)
+	_latlon := float64(_du) + float64(_fen)/60 + float64(_miao)/60/60
+
+	return _latlon
 }
 
 //MD5加密，生成32位MD5字符串

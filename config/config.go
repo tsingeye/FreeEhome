@@ -3,11 +3,16 @@ package config
 import (
 	"encoding/xml"
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/astaxie/beego"
 	"github.com/tsingeye/FreeEhome/tools"
 	"github.com/tsingeye/FreeEhome/tools/logs"
-	"io/ioutil"
-	"os"
+)
+
+const (
+	TimeLayout = "2006-01-02 15:04:05" //时间格式统一模板
 )
 
 const (
@@ -25,6 +30,7 @@ const (
 var (
 	FreeEHomeCodeMap      map[int64]string
 	UDPAddr               string   //udp服务地址
+	AlarmAddr             string   //alarm服务地址
 	StreamStartIP         string   //实时直播流推送配置IP
 	StreamStartPort       int64    //实时直播流推送配置Port
 	WaitStreamSessionTime int64    //等待启动实时直播设备返回session的超时时间
@@ -52,6 +58,11 @@ func init() {
 	UDPAddr = beego.AppConfig.String("udpAddr")
 	if UDPAddr == "" {
 		logs.PanicLogger.Panicln("init udpAddr error, udpAddr cannot be empty")
+	}
+
+	AlarmAddr = beego.AppConfig.String("alarmAddr")
+	if AlarmAddr == "" {
+		logs.PanicLogger.Panicln("init AlarmAddr error, please check it!!!")
 	}
 
 	StreamStartIP = beego.AppConfig.String("streamStartIP")

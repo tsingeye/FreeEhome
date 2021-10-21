@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
 	"github.com/common-nighthawk/go-figure"
 	"github.com/kqbi/service"
 	_ "github.com/tsingeye/FreeEhome/routers"
+	"github.com/tsingeye/FreeEhome/service/alarm"
 	"github.com/tsingeye/FreeEhome/service/udp"
 	"github.com/tsingeye/FreeEhome/tools"
 	"github.com/tsingeye/FreeEhome/tools/logs"
 	"github.com/tsingeye/FreeEhome/tools/sqlDB"
-	"os"
-	"time"
 )
 
 type program struct {
@@ -35,6 +37,8 @@ func (p *program) run() {
 	sqlDB.InitDB()
 	//开启UDP服务
 	go udp.ListenUDPServer()
+	// 开启alarm服务
+	go alarm.ListenAlarmUDPServer()
 	//实现服务端允许跨域
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins:  true,
