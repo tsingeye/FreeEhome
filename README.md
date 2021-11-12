@@ -7,12 +7,13 @@
 - [X] 实时预览
 - [ ] 远程回放
 - [X] 报警监听
-- [ ] 语音对讲
+- [ ] 设备控制
+
 
 # 架构
 - 系统基于beego框架开发，提供RESTful接口
 - CMS信令由海康ehome协议而来，基于UDP+XML进行通信
-- SMS基于[ZLMediaKit](https://github.com/xia-chu/ZLMediaKit),做了二次修改，参见[MediaServer](https://github.com/kqbi/ZLMediaKit.git)
+- SMS直接使用[ZLMediaKit](https://github.com/xia-chu/ZLMediaKit)
 # 编译步骤
 - go get:
     在项目中使用go get下载安装依赖包
@@ -85,10 +86,10 @@ on_stream_not_found=http://127.0.0.1:8080/index/hook/on_stream_not_found
 timeoutSec=20
 ```
 # 运行
-`目前release版本只支持Windows平台`  
+`目前release版本只支持Windows平台，Linux版本自行编译`  
 - 以终端方式运行:双击`FreeEhome.exe` `MediaServer.exe`即可
 - 以服务方式运行:双击执行`install.bat`即可安装为系统服务；`uninstall.bat`为卸载系统服务；`MediaServer`暂不支持Windows系统服务。
-# REST接口
+# RESTful接口
 参见apidoc
 # 技术交流
 QQ群： 1033175645

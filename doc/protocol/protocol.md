@@ -1,3 +1,44 @@
+### 云台控制
+- 请求（平台 to 设备）
+```xml
+
+<?xml version="1.0" encoding="GB2312" ?>
+<PPVSPMessage>
+    <Version>2.5</Version>
+    <Sequence>6256</Sequence>
+    <CommandType>REQUEST</CommandType>
+    <Method>CONTROL</Method>
+    <Command>PTZCONTROL</Command>
+    <Params>
+        //设备的通道ID
+        <Channel>2</Channel>
+        //LEFT RIHGT UP DOWN
+        <PTZCmd>LEFT</PTZCmd>
+        //Start Stop
+        <Action>Start</Action>
+        //1-7
+        <Speed>4</Speed>
+    </Params>
+</PPVSPMessage>
+
+
+```
+- 回复（设备 to 平台）
+```xml
+<?xml version="1.0" encoding="GB2312"?>
+<PPVSPMessage>
+    <Version>2.0</Version>
+    <Sequence>6256</Sequence>
+    <CommandType>RESPONSE</CommandType>
+    <WhichCommand>PTZCONTROL</WhichCommand>
+    //成功这里返回 200
+    <Status>401</Status>
+    <Description>System Oper Faild.</Description>
+    <Params/>
+</PPVSPMessage>
+
+```
+
 ### 录像查询
 - 请求
 ```json
