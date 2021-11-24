@@ -326,3 +326,18 @@ type ResByeStream struct {
 	Description  string   `xml:"Description"`
 	Session      string   `xml:"Params>Session"`
 }
+
+//用于解析发送请求云台控制
+type PTZCtrlXML struct {
+	XMLName     xml.Name `xml:"PPVSPMessage"`
+	Version     float64  `xml:"Version"`
+	Sequence    uint64   `xml:"Sequence"`
+	CommandType string   `xml:"CommandType"`
+	Method      string   `xml:"Method"`
+	Command     string   `xml:"Command"`
+	Params      string   `xml:"Params"`
+	Channel     int      `xml:"Params>Channel"`
+	PTZCmd      string   `xml:"Params>PTZCmd"`
+	Action      string   `xml:"Params>Action"`
+	Speed       int      `xml:"Params>Speed"`
+}

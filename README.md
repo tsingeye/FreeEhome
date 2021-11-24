@@ -7,7 +7,7 @@
 - [X] 实时预览
 - [ ] 远程回放
 - [X] 报警监听
-- [ ] 设备控制
+- [X] 设备控制：云台控制
 
 
 # 架构
@@ -21,6 +21,8 @@
     - 在main.go函数所在路径上使用go build编译。
     - Windows：执行FreeEhome.exe即可运行程序；
     - Linux：执行./FreeEhome即可运行程序。
+# 生成接口文档
+`apidoc -i controllers -o doc/apidoc/`
 # 打包部署，使用bee工具轻松跨平台打包部署：
 - Windows：bee pack -be GOOS=windows;
 - Linux：bee pack -be GOOS=linux;
@@ -30,8 +32,7 @@
     - 双击uninstall.bat卸载服务。
   
 # 使用说明
-## 下载程序
-[v1.0](https://github.com/tsingeye/FreeEhome/releases)
+
 ## 修改CMS配置
 - 进入FreeEhomeCMS=>conf文件夹
 - 根据app.conf文件中注释，按实际情况修改，如下：
@@ -90,6 +91,6 @@ timeoutSec=20
 - 以终端方式运行:双击`FreeEhome.exe` `MediaServer.exe`即可
 - 以服务方式运行:双击执行`install.bat`即可安装为系统服务；`uninstall.bat`为卸载系统服务；`MediaServer`暂不支持Windows系统服务。
 # RESTful接口
-参见apidoc
+参见doc/apidoc
 # 技术交流
 QQ群： 1033175645

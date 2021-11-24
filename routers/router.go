@@ -26,6 +26,8 @@ func init() {
 		//实时直播接口
 		//开始实时直播
 		beego.NSRouter("/channels/:id/stream", &controllers.StreamController{}, "get:StartStream"),
+		//PTZ云台控制
+		beego.NSRouter("/channels/:id/ptz", &controllers.PTZController{}, "get:PTZCtrl"),
 	)
 	beego.AddNamespace(ns)
 

@@ -3,15 +3,16 @@ package udp
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/tsingeye/FreeEhome/config"
-	"github.com/tsingeye/FreeEhome/tools"
-	"github.com/tsingeye/FreeEhome/tools/logs"
-	"github.com/tsingeye/FreeEhome/tools/sqlDB"
 	"net"
 	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/tsingeye/FreeEhome/config"
+	"github.com/tsingeye/FreeEhome/tools"
+	"github.com/tsingeye/FreeEhome/tools/logs"
+	"github.com/tsingeye/FreeEhome/tools/sqlDB"
 )
 
 var gw *GatewayForUDP
@@ -106,6 +107,9 @@ func (gateway *GatewayForUDP) readFromUDP() {
 				go gateway.byeStreamHandle(utf8Data, udpBaseMsg.Sequence)
 			case "QUERYRECORDEDFILES":
 				//接收到蓝方回复的请求查询录像文件信令
+			case "PTZCONTROL":
+				//接收到云台控制的回复信令，忽略不处理
+				logs.BeeLogger.Info("ptz response = %s", utf8Data)
 			default:
 				logs.BeeLogger.Info("Unknown WhichCommand = %s for %s", udpBaseMsg.WhichCommand, udpBaseMsg.CommandType)
 			}

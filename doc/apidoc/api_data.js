@@ -121,6 +121,60 @@ define({ "api": [
     "groupTitle": "设备信息接口"
   },
   {
+    "type": "post",
+    "url": "/api/v1/channels/:id/ptz",
+    "title": "云台控制",
+    "version": "1.0.0",
+    "group": "ptz",
+    "name": "PTZCtrl",
+    "description": "<p>注释：:id参数是channelID</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>授权码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "cmd",
+            "description": "<p>方向命令：LEFT RIHGT UP DOWN，空为LEFT</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "action",
+            "description": "<p>控制动作：Start、Stop，空为Start</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "speed",
+            "description": "<p>云台控制速度：1-7，空为4</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n  \"errCode\": 200,\n  \"errMsg\": \"Success OK\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "controllers/ptz.go",
+    "groupTitle": "云台控制接口"
+  },
+  {
     "type": "get",
     "url": "/api/v1/channels/:id/stream",
     "title": "开始实时直播",

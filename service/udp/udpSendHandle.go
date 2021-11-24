@@ -3,12 +3,13 @@ package udp
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/tsingeye/FreeEhome/config"
-	"github.com/tsingeye/FreeEhome/tools/logs"
 	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/tsingeye/FreeEhome/config"
+	"github.com/tsingeye/FreeEhome/tools/logs"
 )
 
 //使用DeviceID筛选出指定的UDPClient
@@ -163,6 +164,36 @@ func SendByeStream(authCode, deviceID, channelID string) int64 {
 		logs.BeeLogger.Error("authCode=%s, byeStream request failed, deviceID=%s, channelID=%s, error:%s", authCode, deviceID, channelID, err)
 		return config.FreeEHomeServerError
 	}
+
+	return config.FreeEHomeSuccessOK
+}
+
+//发送云台控制
+func SendPTZCtrl(deviceID, cmd, action string, channelID, speed int) int64 {
+	gw.RLock()
+	udpClient := gw.UDPClientList[deviceID]
+	gw.RUnlock()
+	if udpClient == nil {
+		return config.FreeEHomeDeviceNotOnline
+	}
+	sequence := atomic.AddUint64(&gw.Sequence, 2)
+
+	reqPTZCtrl := config.PTZCtrlXML{
+		XMLName:     xml.Name{},
+		Version:     2.5,
+		Sequence:    sequence,
+		CommandType: "REQUEST",
+		Method:      "CONTROL",
+		Command:     "PTZCONTROL",
+		Channel:     channelID,
+		PTZCmd:      cmd,
+		Action:      action,
+		Speed:       speed,
+	}
+	logs.BeeLogger.Info("ptzcmd:%s", reqPTZCtrl)
+
+	//只管发，不关心回复了
+	gw.writeToUDP(reqPTZCtrl, udpClient.UDPAddr, true)
 
 	return config.FreeEHomeSuccessOK
 }
