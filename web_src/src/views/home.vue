@@ -10,10 +10,10 @@
         text-color="#ccc"
         :collapse-transition="false"
       >
-        <el-menu-item index="/monitor">
+        <!--el-menu-item index="/monitor">
           <i class="el-icon-menu"></i>
           <span slot="title">设备点播</span>
-        </el-menu-item>
+        </el-menu-item-->
         <el-menu-item index="/devices">
           <i class="el-icon-menu"></i>
           <span slot="title">设备管理</span>
