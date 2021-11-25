@@ -1,0 +1,38 @@
+body,
+html,
+#app {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+}
+
+.el-main {
+  background: #eee;
+  padding: 10px !important;
+}
+
+/* 隐藏滚动条 */
+// ::-webkit-scrollbar {
+//   width: 0 !important;
+// }
+// ::-webkit-scrollbar {
+//   width: 0 !important;
+//   height: 0;
+// }
+
+/*页面加载动画*/
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(50px);
+  opacity: 0;
+}
+
+.slide-fade-enter {
+  transform: translateX(-50px);
+  opacity: 0;
+}

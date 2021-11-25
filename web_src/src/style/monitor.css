@@ -1,0 +1,88 @@
+.layout-main-sidebar {
+  width: 15%;
+  background-color: #ccc;
+}
+.layout-main-container {
+  width: 85%;
+}
+.layout-main-container .monitor-screen-top {
+  background-color: chocolate;
+  display: flex;
+}
+.layout-main-container .monitor-screen-top .layout-screen-btn {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  margin: 10px 5px;
+  cursor: pointer;
+}
+.layout-main-container .monitor-screen-top .layout-screen-btn div {
+  height: 100%;
+  border: 1px solid #333;
+  background-color: white;
+}
+.layout-main-container .monitor-screen-top .active div {
+  background-color: deepskyblue;
+}
+.layout-main-container .monitor-screen-top .el-icon-full-screen {
+  color: #fff;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.layout-main-container .monitor-screen-container {
+  height: calc(100% - 40px);
+}
+.layout-main-container .monitor-screen-container .layout-screen-container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+.layout-main-container .monitor-screen-container .layout-screen-container > div {
+  height: 100%;
+}
+.layout-main-container .monitor-screen-container .layout-screen-container .player-container {
+  position: relative;
+  height: 100%;
+  border: 1px solid red;
+  box-sizing: border-box;
+}
+.layout-main-container .monitor-screen-container .layout-screen-container .player-container .player-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  box-sizing: border-box;
+}
+.layout-main-container .monitor-screen-container .layout-screen-container .player-container .player-title .el-icon-close {
+  cursor: pointer;
+}
+.layout-main-container .monitor-screen-container .layout-screen-container .active-index {
+  box-shadow: 0 0 10px 1px deepskyblue;
+  border: 1px solid deepskyblue;
+  z-index: 9999;
+}
+.layout-screen_2 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.layout-screen_3 {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+.layout-screen_4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+.screen-item_6-1 {
+  grid-row: 1 / 3;
+  grid-column: 1 / 3;
+}
