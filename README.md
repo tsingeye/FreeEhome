@@ -86,6 +86,9 @@ on_stream_none_reader=http://127.0.0.1:8080/index/hook/on_stream_none_reader
 on_stream_not_found=http://127.0.0.1:8080/index/hook/on_stream_not_found
 timeoutSec=20
 ```
+# Web端
+- 请修改web_src\src\api\request.js中的baseURL为当前服务实际地址
+
 # 运行
 `目前release版本只支持Windows平台，Linux版本自行编译`  
 - 以终端方式运行:双击`FreeEhome.exe` `MediaServer.exe`即可
