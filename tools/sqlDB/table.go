@@ -6,6 +6,7 @@ import (
 
 //设备列表
 type DeviceList struct {
+	ID           int
 	DeviceID     string            `gorm:"column:DeviceID;primary_key" json:"deviceID"` //设备ID
 	DeviceIP     string            `gorm:"column:DeviceIP" json:"deviceIP"`             //来自设备注册时的UDPAddr
 	DeviceName   string            `gorm:"column:DeviceName" json:"deviceName"`
@@ -17,11 +18,12 @@ type DeviceList struct {
 
 //设置表名
 func (DeviceList) TableName() string {
-	return "deviceList"
+	return "t_deviceList"
 }
 
 //通道列表
 type ChannelList struct {
+	ID          int
 	ChannelID   string            `gorm:"column:ChannelID;primary_key" json:"channelID"` //ChannelID=DeviceID_Number
 	ChannelName string            `gorm:"column:ChannelName" json:"channelName"`
 	DeviceID    string            `gorm:"column:DeviceID" json:"deviceID"`
@@ -32,5 +34,5 @@ type ChannelList struct {
 
 //设置表名
 func (ChannelList) TableName() string {
-	return "channelList"
+	return "t_channelList"
 }
